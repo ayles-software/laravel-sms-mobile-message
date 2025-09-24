@@ -11,7 +11,7 @@ class MobileMessageApi
 
     public function sendSms(string $message, string $to, string $from)
     {
-        if (strlen($message) > 5000) {
+        if (strlen($message) > 670) {
             throw new RuntimeException('Notification was not sent. Content length may not be greater than 670 characters.');
         }
 
@@ -34,12 +34,22 @@ class MobileMessageApi
                 'message' => $message,
                 'to' => $to,
                 'from' => $from,
-                'errorMessage' => $response->json('details.0') ?: $response->json('message'),
+                'errorMessage' => $response->json('results.0.error.0'),
+            ];
+        }
+
+        if ($response->json('results.0.status') === 'error') {
+            return (object) [
+                'success' => false,
+                'message' => $message,
+                'to' => $to,
+                'from' => $from,
+                'errorMessage' => $response->json('results.0.error.0'),
             ];
         }
 
         return (object) [
-            'id' => $response->json('messages.0.message_id'),
+            'id' => $response->json('results.0.message_id'),
             'message' => $message,
             'to' => $to,
             'from' => $from,
