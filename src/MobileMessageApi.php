@@ -11,7 +11,7 @@ class MobileMessageApi
 
     public function sendSms(string $message, string $to, string $from)
     {
-        if (strlen($message) > 670) {
+        if (strlen($message) > 1530) {
             throw new RuntimeException('Notification was not sent. Content length may not be greater than 670 characters.');
         }
 
